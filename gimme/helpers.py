@@ -124,16 +124,27 @@ def add_conditional_binding(google, form):
 def set_condition(google, form, project, user_or_group):
     url = '{}/{}:getIamPolicy'.format(CLOUD_RM, project)
     try:
+        # if you want to request a specific policy version:
+        # requested_version = {
+        #  "options": { "requestedPolicyVersion": 3 }
+        #     }
+        # cur_policy = google.post(url, json=requested_version)
+
         cur_policy = google.post(url)
         cur_policy.raise_for_status()
-    except (OAuth2Error, requests.HTTPError):
+    except (OAuth2Error, requests.HTTPError) as e:
         flash(('Could not fetch IAM policy for: {}. This likely means the '
             'project ID was invalid or you do not have access to '
-            'that project.').format(project), 'error')
+            'that project.<br>Full error: {}').format(project, e), 'error')
         return
     expiry = (datetime.datetime.now(utc) + datetime.timedelta(
         minutes=form.period.data)).isoformat()
     new_policy = {'policy': cur_policy.json()}
+
+    # in case policy is at an older version (IAM Conditions requires at least version 3)
+    if new_policy['policy']['version'] < 3:
+        new_policy['policy']['version'] = 3
+
     new_policy['policy']['bindings'].append(
         {'condition': {
             'expression': 'request.time < timestamp("{}")'.format(expiry),

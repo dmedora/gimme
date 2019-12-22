@@ -24,11 +24,11 @@ from __future__ import absolute_import, print_function, unicode_literals
 from flask import Flask
 from flask_dance.contrib.google import make_google_blueprint
 
-from gimme.settings import Production
+from gimme.settings import Development
 from gimme.views import ui
 
 
-def create_app(config_object=Production):
+def create_app(config_object=Development):
     """An application factory."""
     app = Flask(__name__.split('.')[0])
     app.config.from_object(config_object)
