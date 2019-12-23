@@ -40,6 +40,8 @@ rights on the target resource to do so. This normally means they need
 to be an owner or editor of the resource, or have been granted the
 capability to modify the IAM policy of the resource.
 
+Note that the Resource Manager API must also be enabled in the target project to be able to makes calls to getIamPolicy and setIamPolicy. 
+
 ## ⚕️ Current state
 
 Gimme is in its very early stages. It currently only supports granting
@@ -231,6 +233,8 @@ $ flask run
 
 At this point you can open your browser, point it at http://127.0.0.1:5000
 and you should be greeted by a Google login screen.
+
+Ensure that http://127.0.0.1:5000/login/google/authorized is added as a redirect URL for your OAuth Client. 
 
 ## 💉 Testing
 
